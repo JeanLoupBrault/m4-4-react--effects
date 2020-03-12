@@ -23,6 +23,13 @@ const App = () => {
 };
 ```
 
+// 🙅‍♀️ Not in a component :
+
+const App = () => {
+const [data, setData] = React.useState(null);
+return <div>{data.name}</div>;
+};
+
 ---
 
 ### 1. Must be called from a React component
@@ -45,6 +52,18 @@ const App = () => {
 
 \*we will see a way to do this, kinda, in the future. For now though, hooks should always be right there in the component.
 
+// 🙅‍♀️ in a function, not a component:
+const getData = () => {
+
+return data;
+};
+
+const App = () => {
+const [data, setData] = React.useState(null);
+
+return <div>{data.name}</div>;
+};
+
 ---
 
 ### 2. Cannot be conditional
@@ -60,7 +79,7 @@ const App = ({ showErrors }) => {
     error = React.useState(null);
   }
 
-  return 'hi';
+  return "hi";
 };
 ```
 
@@ -74,8 +93,31 @@ Fix the following state hooks
 
 ```js
 const Button = ({ type, children }) => {
-  if (type === 'primary') {
-    const [color, setColor] = React.useState('red');
+  if (type === "primary") {
+    const [color, setColor] = React.useState("red");
+
+    return (
+      <button
+        style={{ color }}
+        onMouseEnter={() => {
+          setColor("purple");
+        }}
+        onMouseLeave={() => {
+          setColor("red");
+        }}
+      >
+        {children}
+      </button>
+    );
+  } else {
+    return <button style={{ backgroundColor: "purple" }}>{children}</button>;
+  }
+};
+```
+
+const Button = ({ type, children }) => {
+const [color, setColor] = React.useState('red');
+if (type === 'primary') {
 
     return (
       <button
@@ -90,11 +132,15 @@ const Button = ({ type, children }) => {
         {children}
       </button>
     );
-  } else {
-    return <button style={{ backgroundColor: 'purple' }}>{children}</button>;
-  }
+
+} else {
+return
+<button style={{ backgroundColor: 'purple' }}>
+{children}
+</button>
+);
+}
 };
-```
 
 ---
 

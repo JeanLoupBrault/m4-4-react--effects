@@ -2,6 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 import cookieSrc from '../cookie.svg';
+import Item from './Item';
+import useInterval from '../hooks/use-interval.hook';
+import useDocumentTitle from '../hooks/use-document-title.hook';
+import useKeydown from '../hooks/use-keydown.hook';
 
 const items = [
   { id: 'cursor', name: 'Cursor', cost: 10, value: 1 },
@@ -9,14 +13,54 @@ const items = [
   { id: 'farm', name: 'Farm', cost: 1000, value: 80 },
 ];
 
+const calculateCookiesPerSecond = purchasedItems => {
+  return Object.keys(purchasedItems).reduce((acc, itemId) => {
+    const numOwned = purchasedItems[itemId];
+    const item = items.find(item => item.id === itemId);
+    const value = item.value;
+
+    return acc + value * numOwned;
+  }, 0);
+};
+
 const Game = () => {
   // TODO: Replace this with React state!
-  const numCookies = 100;
-  const purchasedItems = {
+  const [numCookies, setNumCookies] = React.useState(1000);
+
+  const [purchasedItems, setPurchasedItems] = React.useState({
     cursor: 0,
     grandma: 0,
     farm: 0,
-  };
+  });
+
+  // const calculateCookiesPerTick = purchasedItems => {
+  //   return Object.keys(purchasedItems).reduce((acc, itemId) => {
+  //     const numOwned = purchasedItems[itemId];
+  //     const item = items.find(item => item.id === itemId);
+  //     const value = item.value;
+
+  //     return acc + value * numOwned;
+  //   }, 0);
+  // };
+
+  useInterval(() => {
+    //const numOfGeneratedCookies = calculateCookiesPerTick(purchasedItems);
+    const numOfGeneratedCookies = calculateCookiesPerSecond(purchasedItems);
+    // Add this number of cookies to the total
+    setNumCookies(numCookies + numOfGeneratedCookies);
+  }, 1000);
+
+  //React.useEffect(() => {
+  useDocumentTitle({
+    //document.title = `${numCookies} cookies - Cookie Clicker Workshop`;
+    title: `${numCookies} cookies - Cookie Clicker Workshop`,
+    //return () => {
+    //  document.title = `Cookie Clicker Workshop`;
+    fallbackTitle: `Cookie Clicker Workshop`,
+  });
+  console.log(useDocumentTitle);
+  //}, [numCookies]);
+  useKeydown('Space', incrementCookies);
 
   return (
     <Wrapper>
@@ -34,6 +78,29 @@ const Game = () => {
       <ItemArea>
         <SectionTitle>Items:</SectionTitle>
         {/* TODO: Add <Item> instances here, 1 for each item type. */}
+        {items.map(item => {
+          return (
+
+            <Item
+              key={item.id}
+
+              name={item.name}
+              cost={item.cost}
+              value={item.value}
+              handleAttemptedPurchase={() => {
+                if (numCookies < items.cost) {
+                  alert('Cannot aford item');
+                  return;
+                }
+                setNumCookies(numCookies - item.cost);
+                setPurchasedItems({
+                  ...purchasedItems,
+                  [item.id]: purchasedItems[item.id] + 1,
+                });
+              }}
+            />
+          );
+        })}
       </ItemArea>
     </Wrapper>
   );

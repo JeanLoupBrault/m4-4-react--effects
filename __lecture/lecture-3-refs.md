@@ -11,7 +11,7 @@ One way to do this:
 ```js live=true
 const Form = () => {
   React.useEffect(() => {
-    const firstNameInput = document.querySelector('#first-name');
+    const firstNameInput = document.querySelector("#first-name");
 
     firstNameInput.focus();
   }, []);
@@ -99,7 +99,7 @@ Use `useRef`
 ```js
 const ConfirmButton = () => {
   React.useEffect(() => {
-    const btn = document.getElementById('confirm-button');
+    const btn = document.getElementById("confirm-button");
 
     if (btn) {
       btn.focus();
@@ -110,12 +110,27 @@ const ConfirmButton = () => {
 };
 ```
 
+const ConfirmButton = () => {
+const btn = React.useRef (null);
+React.useEffect(() => {
+if (btn) {
+btn.current.focus();
+}
+}, []);
+
+return (
+<button ref={btn} id="confirm-button">
+Confirm
+</button>;
+)
+};
+
 ---
 
 ```js
 const PasswordInput = ({ focusOnMount }) => {
   React.useEffect(() => {
-    const input = document.querySelector('[data-name=pswrd]');
+    const input = document.querySelector("[data-name=pswrd]");
 
     if (focusOnMount && input) {
       input.focus();
