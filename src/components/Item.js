@@ -19,8 +19,8 @@ const Item = ({
       ref.current.focus(); //for keyboard users
 
     }
-    console.log('keyboard user focus on index 0: ', ref);
-  }, []);
+    // console.log('keyboard user focus on index 0: ', ref);
+  }, [index]);
 
   return (
     <Wrapper ref={ref} onClick={handleAttemptedPurchase}>
